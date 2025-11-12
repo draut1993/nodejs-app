@@ -1,0 +1,25 @@
+pipeline{
+    agent any
+
+    triggers {
+        githubPush()    // Automatically triggers pipeline on GitHub push
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))      // Keep last 5 builds only
+        disableConcurrentBuilds()                          // Prevent parallel runs of same job
+        timeout(time: 15, unit: 'MINUTES')                 // Stop pipeline if exceeds 15 mins
+    }
+
+    tools{
+        nodejs 'Node-20.19.5'
+    }
+
+    stages{
+        stage("Install dependencies"){
+            steps{
+                sh 'npm install'
+            }
+        }
+    }
+}
