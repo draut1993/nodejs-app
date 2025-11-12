@@ -35,7 +35,7 @@ pipeline{
                 sshagent([env.NODE_SSH_CRED]) {
                
                sh '''
-               ssh -o StrictHostKeyChecking=no  $NODE_SERVER@$NODE_USER "sudo mkdir -p $NODE_DIR || true"
+               ssh -o StrictHostKeyChecking=no  $NODE_SERVER@$NODE_USER "mkdir -p $NODE_DIR || true"
                rsync -avz --exclude=node_modules --exclude=.git ./ $NODE_SERVER@$NODE_USER:$NODE_DIR/
                '''
 }
