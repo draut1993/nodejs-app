@@ -41,5 +41,16 @@ pipeline{
 }
             }
         }
+
+        stage("Start the nodejs server"){
+            steps{
+              sshagent(['NodejsCredentials']) {
+             sh '''
+              ssh $NODE_USER@$NODE_SERVER " cd $NODE_DIR && npm install &&
+            npx pm2 start app.js --name nodejs --update-env || npx pm2 restart nodejs"
+            '''
+}
+            }
+        }
     }
 }
