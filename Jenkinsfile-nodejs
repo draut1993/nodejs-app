@@ -1,6 +1,14 @@
 pipeline{
     agent any
 
+    environment{
+        NODE_SERVER = '54.152.197.37'
+        NODE_USER = 'ec2-user'
+        NODE_DIR = '/home/ec2-user/nodejs'
+        NODE_SSH_CRED = 'NodejsCredentials'
+
+    }
+
     triggers {
         githubPush()    // Automatically triggers pipeline on GitHub push
     }
@@ -19,6 +27,18 @@ pipeline{
         stage("Install dependencies"){
             steps{
                 sh 'npm install'
+            }
+        }
+
+        stage("upload nodejs project to nodejs server"){
+            steps{
+                sshagent([env.NODE_SSH_CRED]) {
+               
+               sh '''
+               ssh -o StrictHostKeyChecking=no  $NODE_SERVER@$NODE_USER "sudo mkdir -p $NODE_DIR || true"
+               rsync -avz --exclude=node_modules --exclude=.git ./ $NODE_SERVER@$NODE_USER:$NODE_DIR/
+               '''
+}
             }
         }
     }
